@@ -311,23 +311,24 @@ footer { margin-top: 40px; font-size: 0.875rem; color: rgba(255, 255, 255, 0.4);
     gap: 0px;
     
     opacity: 0; /* Start usynlig */
-    transition: opacity 0.4s ease-in-out 800ms; /* Endnu mere delay - starter når lågen er åben */
-    pointer-events: auto; /* Gør indholdet af den åbne låge klikbar */
+    transition: opacity 0.4s ease-in-out 800ms; /* Venter på at døren er næsten helt åben */
+    pointer-events: none; /* Make it non-interactive when invisible */
 }
 
 .door-back-content.is-visible {
     opacity: 1;
+    pointer-events: auto; /* Gør indholdet af den åbne låge klikbar */
 }
 
 .door-back-content-day {
     font-family: 'Patrick Hand', cursive;
-    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    font-size: clamp(1rem, 4.5vw, 2.5rem);
     font-weight: 400;
     color: #eaddc7;
 }
 
 .door-back-content-emoji {
-    font-size: clamp(1.2rem, 4vw, 2rem);
+    font-size: clamp(0.9rem, 4vw, 2rem);
     margin-top: -10px; /* Adjust emoji position */
 }
 
