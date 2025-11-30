@@ -1,0 +1,684 @@
+/* BOX-SIZING RESET */
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+/* IMPORTEREDE FONTE: 'Patrick Hand' til kridt-stil, 'Inter' til brødtekst */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Patrick+Hand&display=swap');
+
+/* TEMA: BYSKOVSKOLEN JULEKALENDER (Mobile-First) */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #005a5b; 
+    background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 15px 15px;
+    color: #f8f9fa;
+    min-height: 100vh;
+    padding: 10px; /* Reduceret padding for mobil */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0; /* Fjerner default margin */
+}
+
+/* Snefnug animation */
+.snowflake {
+    color: #fff;
+    font-size: 1em;
+    font-family: Arial, sans-serif;
+    text-shadow: 0 0 2px #000;
+    position: absolute;
+    top: -10px;
+    z-index: 1000;
+    user-select: none;
+    cursor: default;
+    /* Opdateret til at håndtere flere animationer via JS */
+    animation-name: fall, spin;
+    animation-timing-function: linear, linear;
+    animation-iteration-count: infinite, infinite;
+}
+
+@keyframes fall {
+    to {
+        top: 100%;
+    }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* HOVEDCONTAINER */
+.calendar-main-container {
+    max-width: 1200px;
+    width: 100%;
+    background-color: transparent;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), 0 0 0 8px #7a5e4a, 0 0 0 10px #513e31;
+    padding: 20px; /* Mobil-padding */
+    position: relative;
+    z-index: 10;
+    /* overflow: hidden; */ /* FJERNET for at forhindre klipning af 3D-effekt */
+}
+
+/* HEADER STYLING */
+header {
+    text-align: center;
+    margin-bottom: 20px; /* Reduceret margin */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 20px;
+}
+
+.header-logo {
+    height: 40px; /* Lidt mindre på mobil */
+    margin-right: 10px;
+    filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
+    mix-blend-mode: multiply;
+}
+
+header h1 {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 2.5rem; /* Reduceret for mobil */
+    font-weight: 400;
+    color: #fffde7;
+    margin-top: 0; /* Adjusted to reduce space below logo */
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+header p {
+    font-size: 1rem; /* Reduceret for mobil */
+    color: #ced4da;
+    margin-top: 8px;
+    font-weight: 400;
+}
+
+#date-info {
+    font-size: 0.875rem; /* Reduceret for mobil */
+    margin-top: 16px;
+    padding: 8px 12px;
+    background-color: #a3d1d1;
+    border-radius: 4px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    border: 1px solid #8bbdbd;
+    display: inline-block;
+}
+
+/* KALENDER GITTER - Mobile-First */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 kolonner på mobil */
+    gap: 1rem; /* Mindre afstand på mobil */
+}
+
+/* LÅGE STYLING - 3D FLIP (RETTET) */
+.door {
+    aspect-ratio: 1 / 1;
+    perspective: 1000px;
+    cursor: pointer;
+    
+    /* '.door' er nu selve "kassen" bag lågen */
+    background-color: #3b2d23; /* Mørk inderside */
+    box-shadow: inset 2px 2px 10px rgba(0,0,0,0.5);
+    border-radius: 4px;
+    position: relative;
+    z-index: 10; /* Højere z-index for lukkede låger */
+    pointer-events: auto; /* Sikrer at lukkede låger er klikbare */
+}
+
+.door-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+    transform-origin: left center;
+    pointer-events: none; /* Løser problemet med klik-blokering fra den usynlige boks */
+}
+
+.door-front, .door-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.door-front {
+    background-color: #fefae0;
+    border: 1px solid #eaddc7;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+    pointer-events: auto; /* Gør den lukkede låge-flade klikbar */
+}
+
+.door-back {
+    /* Denne er nu gennemsigtig for at vise kassens baggrund */
+    background-color: transparent; 
+    transform: rotateY(180deg);
+}
+
+.door::before {
+    content: '';
+    position: absolute;
+    top: -8px; /* Justeret for mindre låger */
+    left: 50%;
+    transform: translateX(-50%) rotate(-4deg);
+    width: 50%;
+    height: 18px;
+    background-color: rgba(255, 229, 102, 0.5);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    border-left: 1px solid rgba(255,255,255,0.3);
+    border-right: 1px solid rgba(255,255,255,0.3);
+    z-index: 10;
+}
+
+.door:hover:not(.locked) .door-inner {
+    transform: scale(1.02); /* Lettere svæve-effekt */
+}
+
+.door-number {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 2.2rem; /* Reduceret for mobil */
+    font-weight: 400;
+    color: #582f0e;
+    text-shadow: none;
+    z-index: 5;
+    transition: opacity 0.3s;
+}
+
+/* MODAL STYLING */
+.modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    display: flex; /* Changed from none to flex */
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 50;
+    
+    /* Animation properties */
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 0s linear 0.25s, opacity 0.25s ease;
+}
+
+.modal.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0s linear 0s, opacity 0.25s ease;
+}
+
+.modal-card {
+    background-color: #f7f2e9;
+    background-image: repeating-linear-gradient(to bottom, #f7f2e9, #f7f2e9 29px, #e8e1d3 30px, #e8e1d3 30px);
+    background-size: 100% 30px;
+    border-radius: 4px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    max-width: 512px;
+    width: 100%;
+    padding: 24px; /* Reduceret padding for mobil */
+    padding-left: 32px;
+    position: relative;
+    border: 1px solid #d1c7b7;
+    border-left: 1px solid #a3d1d1;
+    
+    /* Animation properties */
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.25s ease-out 0.1s, transform 0.25s ease-out 0.1s;
+}
+
+.modal.is-visible .modal-card {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.modal-card::before {
+    content: '';
+    position: absolute;
+    left: 24px; /* Justeret */
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: #a3d1d1;
+}
+
+.modal-title {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 1.8rem; /* Reduceret for mobil */
+    font-weight: 400;
+    color: #005a5b;
+    margin-bottom: 16px;
+}
+
+/* ... Alle andre styles som .door.open, .locked, .was-opened, etc. forbliver de samme ... */
+.door:active:not(.locked) .door-inner { transform: scale(0.98); }
+/* Rettelse: Gælder for ALLE åbne/roterede låger for at forhindre klik-blokering */
+.door.open, .door.was-opened { 
+    z-index: 5; 
+    /* pointer-events: none; - fjernet for at tillade klik på åbne låger */
+} 
+.door.open .door-inner { transform: rotateY(-160deg); }
+.door.open .door-number { opacity: 0; }
+.door.locked { cursor: not-allowed; }
+.door.locked .door-front { background-color: #d3d3d3; opacity: 0.8; }
+.door.locked::before { background-color: rgba(180, 180, 180, 0.5); }
+.door.locked .door-number { color: #8d8d8d; }
+.modal-close-button { position: absolute; top: 12px; right: 12px; color: #a5a58d; cursor: pointer; transition: color 0.15s; }
+.modal-close-button:hover { color: #6b705c; }
+.modal-close-icon { width: 28px; height: 28px; }
+.modal-content-container { max-height: 70vh; overflow-y: auto; color: #3d405b; font-size: 1rem; line-height: 30px; }
+.question-box, .answer-box { background-color: transparent; padding: 0; border-radius: 0; margin-bottom: 30px; border-left: none; box-shadow: none; }
+.box-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Tilføjet for afstand mellem ikon og tekst */
+    color: #3d405b;
+}
+.question-box .box-title { color: #005a5b; }
+.answer-box .box-title { color: #c1121f; }
+footer { margin-top: 40px; font-size: 0.875rem; color: rgba(255, 255, 255, 0.4); text-align: center; }
+.door.was-opened:not(.open) .door-inner { transform: rotateY(-160deg); box-shadow: none; }
+.door.was-opened:not(.open) .door-number { opacity: 0; }
+.door.was-opened::before { display: none; }
+
+/* Styling for content inside the door */
+.door-back-content {
+    position: absolute;
+    inset: 0; /* Fills the parent */
+    z-index: 0; /* Sits behind the door-inner */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0px;
+    
+    opacity: 0; /* Start usynlig */
+    transition: opacity 0.4s ease-in-out 800ms; /* Endnu mere delay - starter når lågen er åben */
+    pointer-events: auto; /* Gør indholdet af den åbne låge klikbar */
+}
+
+.door-back-content.is-visible {
+    opacity: 1;
+}
+
+.door-back-content-day {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: #eaddc7;
+}
+
+.door-back-content-emoji {
+    font-size: 2rem;
+    margin-top: -10px; /* Adjust emoji position */
+}
+
+#snow-container { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    pointer-events: none; 
+    z-index: -1; /* Placerer den BAG alt andet indhold i containeren */
+    overflow: hidden; /* Klipper sneen til containerens kanter */
+    border-radius: 8px; /* Matcher containerens afrundede hjørner */
+}
+.snowdrift-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    pointer-events: none;
+    z-index: 99;
+    overflow: hidden;
+}
+.snow { position: absolute; background: #fff; border-radius: 50%; box-shadow: 0 -10px 15px rgba(255, 255, 255, 0.5); }
+.snow.a { width: 55%; height: 200px; bottom: -150px; left: -10%; opacity: 0.9; }
+.snow.b { width: 60%; height: 220px; bottom: -180px; right: -10%; opacity: 0.8; }
+.snow.c { width: 40%; height: 180px; bottom: -150px; left: 30%; opacity: 0.7; }
+.reset-button { background-color: #c1121f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 500; margin-left: 15px; font-family: 'Inter', sans-serif; font-size: 0.875rem; transition: background-color 0.2s ease-in-out; vertical-align: middle; }
+.reset-button:hover { background-color: #9a0e18; }
+
+
+/* --- Media Queries for Larger Screens --- */
+
+/* Tablet (640px and up) */
+@media (min-width: 640px) {
+    body {
+        padding: 20px;
+    }
+
+    .calendar-main-container {
+        padding: 40px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 0 12px #7a5e4a, 0 0 0 15px #513e31;
+    }
+
+    header h1 {
+        font-size: 3.5rem;
+    }
+
+    .header-logo {
+        height: 50px;
+    }
+
+    .calendar-grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 1.5rem;
+    }
+
+    .door-number {
+        font-size: 3rem;
+    }
+
+    .modal-card {
+        padding: 32px;
+        padding-left: 48px;
+    }
+
+    .modal-card::before {
+        left: 40px;
+    }
+
+    .modal-title {
+        font-size: 2.5rem;
+    }
+}
+
+/* Desktop (1024px and up) */
+@media (min-width: 1024px) {
+    .calendar-grid {
+        grid-template-columns: repeat(8, 1fr);
+        gap: 2rem;
+    }
+}
+
+/* For short screens (e.g., landscape mobile) */
+@media (max-height: 500px) {
+    .snowdrift-container {
+        height: 60px; /* Lavere snedrive */
+    }
+    .snow.a, .snow.b, .snow.c {
+        height: 150px;
+        bottom: -110px;
+    }
+    .snow.b {
+        bottom: -120px;
+    }
+}
+
+/* STYLING FOR NYE INDHOLDS-BLOKKE I MODAL */
+.html-block, .image-block, .video-container {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+.image-block img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    display: block;
+    margin: 0 auto;
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* STYLING FOR QUIZ-BLOKKE */
+.quiz-block {
+    margin: 24px 0;
+    padding: 16px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.quiz-question {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    color: #3d405b;
+}
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.quiz-option {
+    width: 100%;
+    padding: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    text-align: left;
+    background-color: #fff;
+    border: 1px solid #d1c7b7;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    color: #3d405b;
+}
+
+.quiz-option:not(:disabled):hover {
+    background-color: #fefae0;
+    border-color: #eaddc7;
+    transform: translateY(-2px);
+}
+
+.quiz-option.correct {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    font-weight: 600;
+}
+
+.quiz-option.incorrect {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+    font-weight: 600;
+}
+
+.quiz-option:disabled {
+    cursor: not-allowed;
+}
+
+.quiz-feedback {
+    margin-top: 16px;
+    font-size: 0.95rem;
+}
+
+.quiz-feedback .correct-text {
+    color: #155724;
+    font-weight: 500;
+}
+
+.quiz-feedback .incorrect-text {
+    color: #721c24;
+    font-weight: 500;
+}
+
+.quiz-explanation {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f0f0f0; /* Light background for explanation */
+    border-left: 4px solid #005a5b; /* School's primary color */
+    border-radius: 4px;
+    color: #3d405b;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+/* Style for Quote Block */
+.quote-block {
+    margin: 24px 0;
+    padding-left: 20px;
+    border-left: 4px solid #005a5b;
+}
+
+.quote-block blockquote {
+    font-style: italic;
+    font-size: 1.1rem;
+    color: #3d405b;
+    margin: 0;
+}
+
+.quote-block cite {
+    display: block;
+    text-align: right;
+    margin-top: 10px;
+    font-weight: 600;
+    color: #005a5b;
+}
+
+/* Preserve newlines in text blocks */
+.question-box p,
+.answer-box p,
+.quiz-question,
+.quiz-explanation,
+.quote-block blockquote {
+    white-space: pre-wrap;
+    word-break: break-word; /* Prevents long unbreakable strings from overflowing */
+}
+
+
+.box-title i {
+    width: 1rem;
+    height: 1rem;
+}
+.wysiwyg-editor {
+    border: 1px solid #ccc;
+    padding: 5px;
+    min-height: 100px;
+    background-color: white;
+}
+
+/* Editor specific styles */
+.formatting-toolbar {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+    flex-wrap: wrap; /* Allow buttons to wrap */
+}
+
+.format-btn {
+    display: inline-flex; /* Ensures content aligns well */
+    align-items: center;
+    justify-content: center;
+
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 5px 8px; /* Standard padding for all format buttons */
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 0.9em;
+    position: relative; /* Needed for absolute positioning of color input */
+    overflow: hidden; /* Hide parts of color input that overflow */
+}
+
+.format-btn:hover {
+    background-color: #e0e0e0;
+}
+
+/* Styling for the new custom color picker dropdown */
+.format-btn-group {
+    position: relative; /* For dropdown positioning */
+    display: inline-block;
+}
+
+.color-dropdown {
+    position: absolute;
+    top: 100%; /* Position below the button */
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: 5px;
+    display: none; /* Hidden by default */
+    z-index: 10; /* Ensure it's above other content */
+    white-space: nowrap; /* Prevent swatches from wrapping if too many */
+}
+
+.color-dropdown.is-visible {
+    display: flex; /* Show when visible */
+    flex-wrap: wrap; /* Allow swatches to wrap */
+    gap: 2px;
+}
+
+.color-swatch {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #eee;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: transform 0.1s ease;
+}
+
+.color-swatch:hover {
+    transform: scale(1.1);
+    border-color: #333;
+}
+
+.color-picker-btn {
+    position: relative; /* Ensure it's relative for absolute child */
+    /* background-color and border also inherited from .format-btn */
+    /* Padding is handled by .format-btn, ensuring consistent size */
+}
+
+.color-picker-btn .color-picker-icon {
+    font-size: 1.2em; /* Ensure icon has a good size */
+    color: inherit; /* Inherit color, will be overridden by JS for selected color */
+    z-index: 0; /* Ensure icon is behind the input */
+    display: block; /* Ensures it takes up space */
+}
+
+.color-picker-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0; /* Make it invisible */
+    cursor: pointer;
+    z-index: 1; /* Ensure it's above the icon for click events */
+    padding: 0;
+    border: none;
+    /* Important: reset appearance to ensure full coverage and clickable area */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
