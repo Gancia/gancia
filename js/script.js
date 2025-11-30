@@ -219,7 +219,10 @@ function openDoor(day) {
             if (content) {
                 content.classList.add('is-visible');
             }
-            setTimeout(showModal, 400); // 400ms matches the fade-in duration
+            // Vælg timeout baseret på skærmstørrelse for at matche CSS-animationen
+            const isDesktop = window.innerWidth >= 1024;
+            const modalTimeout = isDesktop ? 400 : 500; // Kortere for desktop, længere for mobil
+            setTimeout(showModal, modalTimeout);
         }, { once: true });
     } else {
         setTimeout(showModal, 800);
