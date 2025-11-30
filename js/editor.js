@@ -899,7 +899,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'answer': contentHtml += `<div class="answer-box"><p class="box-title"><i data-lucide="message-square"></i> Svar</p><p>${block.value}</p></div>`; break;
                 case 'html': contentHtml += `<div class="html-block">${block.value}</div>`; break;
                 case 'image': contentHtml += `<div class="image-block"><img src="${block.value}" alt="${block.alt || ''}"></div>`; break;
-                case 'video': contentHtml += `<div class="video-container"><iframe src="${block.value}" frameborder="0" allowfullscreen></iframe></div>`; break;
+                case 'video': contentHtml += `<div class="video-container"><iframe src="${block.value}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"></iframe></div>`; break;
                 case 'quiz':
                     const quizId = `quiz-preview-0`;
                     const encodedExplanation = encodeURIComponent(block.value.explanation);

@@ -28,14 +28,17 @@ async function initializeApp() {
         calendarContainer.innerHTML = '<p style="color: #f8d7da; background-color: #721c24; padding: 1rem; border-radius: 4px;">Fejl: `content.js` mangler eller kunne ikke indlæses. Sørg for at filen eksisterer i projektets rodmappe.</p>';
         return;
     }
+
+    // Ensure config exists to prevent errors
+    if (!calendarData.config) {
+        calendarData.config = {};
+    }
     
     // Populate header with dynamic data
-    if (calendarData.config) {
-        document.getElementById('header-logo').src = calendarData.config.logoUrl;
-        document.getElementById('main-title').textContent = calendarData.config.mainTitle;
-        document.getElementById('subtitle').textContent = calendarData.config.subtitle;
-        document.title = calendarData.config.mainTitle || 'Didaktisk Julekalender';
-    }
+    document.getElementById('header-logo').src = calendarData.config.logoUrl || 'assets/logo.png';
+    document.getElementById('main-title').textContent = calendarData.config.mainTitle || 'Didaktisk Julekalender';
+    document.getElementById('subtitle').textContent = calendarData.config.subtitle || 'En julekalender om didaktik';
+    document.title = calendarData.config.mainTitle || 'Didaktisk Julekalender';
 
     updateDateInfo();
     createCalendar();
@@ -52,12 +55,12 @@ function createCalendar() {
     calendarContainer.innerHTML = '';
     const openedDoors = JSON.parse(localStorage.getItem('openedDoors')) || [];
     
-    // Use doorOrder from config, with a fallback for backward compatibility
     const doorNumbers = (calendarData.config && calendarData.config.doorOrder)
         ? calendarData.config.doorOrder
         : [15, 8, 22, 3, 19, 11, 6, 24, 1, 14, 9, 20, 5, 17, 2, 12, 21, 7, 18, 4, 13, 23, 10, 16];
     
     const isDecember = currentMonth === 11;
+    const isTestMode = calendarData.config.isTestMode || false;
 
     doorNumbers.forEach(day => {
         const door = document.createElement('div');
@@ -66,22 +69,42 @@ function createCalendar() {
         door.setAttribute('role', 'button');
         door.setAttribute('tabindex', '0');
 
-        // Correct locking logic
         const isLocked = !isTestMode && (!isDecember || day > currentDay);
         const wasOpened = openedDoors.includes(day);
 
-        if (wasOpened && !isLocked) { // A door should only appear open if it was opened AND is not currently locked
-            door.classList.add('was-opened');
-            const data = calendarData[day];
-            if (data) {
-                const content = document.createElement('div');
-                content.className = 'door-back-content is-visible';
-                content.innerHTML = `
-                    <span class="door-back-content-day">${day}</span>
-                    <span class="door-back-content-emoji">${data.emoji || ''}</span>
-                `;
-                door.appendChild(content);
+        // Flipping elements
+        const numberSpan = document.createElement('span');
+        numberSpan.className = 'door-number';
+        numberSpan.textContent = day;
+        const doorInner = document.createElement('div');
+        doorInner.className = 'door-inner';
+        const doorFront = document.createElement('div');
+        doorFront.className = 'door-front';
+        const doorBack = document.createElement('div');
+        doorBack.className = 'door-back';
+        doorFront.appendChild(numberSpan);
+        doorInner.appendChild(doorFront);
+        doorInner.appendChild(doorBack);
+        door.appendChild(doorInner);
+
+        // Pre-render back content for all doors
+        const data = calendarData[day];
+        if (data) {
+            const content = document.createElement('div');
+            content.className = 'door-back-content';
+            content.innerHTML = `
+                <span class="door-back-content-day">${day}</span>
+                <span class="door-back-content-emoji">${data.emoji || ''}</span>
+            `;
+            if (wasOpened && !isLocked) {
+                content.classList.add('is-visible');
             }
+            door.appendChild(content);
+        }
+
+        // Set initial states
+        if (wasOpened && !isLocked) {
+            door.classList.add('was-opened');
         }
 
         if (isLocked) {
@@ -89,40 +112,16 @@ function createCalendar() {
             const lockedHandler = () => showMessage('Denne låge er låst!', `Kom tilbage den ${day}. december for at åbne den.`);
             door.addEventListener('click', lockedHandler);
             door.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    lockedHandler();
-                }
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); lockedHandler(); }
             });
         } else {
             const openHandler = () => openDoor(day);
             door.addEventListener('click', openHandler);
             door.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    openHandler();
-                }
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openHandler(); }
             });
         }
-
-        const numberSpan = document.createElement('span');
-        numberSpan.className = 'door-number';
-        numberSpan.textContent = day;
-
-        const doorInner = document.createElement('div');
-        doorInner.className = 'door-inner';
-
-        const doorFront = document.createElement('div');
-        doorFront.className = 'door-front';
-
-        const doorBack = document.createElement('div');
-        doorBack.className = 'door-back';
-
-        doorFront.appendChild(numberSpan);
-        doorInner.appendChild(doorFront);
-        doorInner.appendChild(doorBack);
-        door.appendChild(doorInner);
-
+        
         calendarContainer.appendChild(door);
     });
 }
@@ -135,59 +134,19 @@ function openDoor(day) {
     const doorElement = document.querySelector(`.door[data-day="${day}"]`);
     if (doorElement.classList.contains('locked')) return;
 
-    const isDoorAlreadyVisuallyOpen = doorElement.classList.contains('open');
-
-    if (!isDoorAlreadyVisuallyOpen) {
-        const openedDoors = JSON.parse(localStorage.getItem('openedDoors')) || [];
-        if (!openedDoors.includes(day)) {
-            openedDoors.push(day);
-            localStorage.setItem('openedDoors', JSON.stringify(openedDoors));
-        }
-
-        doorElement.classList.add('was-opened');
-        closeModal();
-        doorElement.classList.add('open');
-
-        // Original logic: create content as sibling to door-inner
-        if (!doorElement.querySelector('.door-back-content')) {
-            const data = calendarData[day];
-            if (data) {
-                const content = document.createElement('div');
-                content.className = 'door-back-content';
-                content.innerHTML = `
-                    <span class="door-back-content-day">${day}</span>
-                    <span class="door-back-content-emoji">${data.emoji || ''}</span>
-                `;
-                doorElement.appendChild(content);
-
-                // Use a short delay to trigger the CSS transition
-                setTimeout(() => {
-                    content.classList.add('is-visible');
-                }, 200);
-            }
-        }
-    } else {
-        closeModal();
-    }
-
-    // Show the modal after the door flip and content fade have started
-    setTimeout(() => {
+    const showModal = () => {
         const data = calendarData[day];
         if (!data) {
             console.error(`Intet indhold fundet for dag ${day} i content.json`);
             return;
         }
-
-        modal.classList.remove('is-visible');
         modalContent.innerHTML = '';
-
         modalTitle.innerHTML = `${data.emoji || ''} ${data.title}`;
         let contentHtml = '';
         let quizIdCounter = 0;
         data.body.forEach(block => {
             switch (block.type) {
                 case 'question':
-                    // Handle old and new data structures
                     const isOldFormat = typeof block.value === 'string';
                     const titleText = isOldFormat ? 'Spørgsmål/Princip' : (block.value.titleType === 'principle' ? 'Princip' : 'Spørgsmål');
                     const questionText = isOldFormat ? block.value : block.value.text;
@@ -203,7 +162,7 @@ function openDoor(day) {
                     contentHtml += `<div class="image-block"><img src="${block.value}" alt="${block.alt || 'Billede fra julekalenderen'}"></div>`;
                     break;
                 case 'video':
-                    contentHtml += `<div class="video-container"><iframe src="${block.value}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+                    contentHtml += `<div class="video-container"><iframe src="${block.value}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"></iframe></div>`;
                     break;
                 case 'quiz':
                     const quizId = `quiz-${quizIdCounter++}`;
@@ -228,28 +187,43 @@ function openDoor(day) {
                 optionButton.addEventListener('click', () => handleQuizAnswer(optionButton, optionButton.dataset.isCorrect === 'true'));
             });
         });
-
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
-
         const images = modalContent.querySelectorAll('img');
-        const imagePromises = [...images].map(img => {
-            return new Promise((resolve) => {
-                if (img.complete) resolve();
-                else {
-                    img.onload = resolve;
-                    img.onerror = resolve;
-                }
-            });
-        });
-
+        const imagePromises = [...images].map(img => new Promise((resolve) => { if (img.complete) resolve(); else { img.onload = resolve; img.onerror = resolve; } }));
         Promise.all(imagePromises).then(() => {
             void modal.offsetHeight;
             modal.classList.add('is-visible');
         });
+    };
 
-    }, isDoorAlreadyVisuallyOpen ? 0 : 1000);
+    if (doorElement.classList.contains('was-opened')) {
+        showModal();
+        return;
+    }
+
+    const openedDoors = JSON.parse(localStorage.getItem('openedDoors')) || [];
+    if (!openedDoors.includes(day)) {
+        openedDoors.push(day);
+        localStorage.setItem('openedDoors', JSON.stringify(openedDoors));
+    }
+    doorElement.classList.add('was-opened');
+    closeModal();
+    doorElement.classList.add('open');
+
+    const doorInner = doorElement.querySelector('.door-inner');
+    if (doorInner) {
+        doorInner.addEventListener('transitionend', function onTransitionEnd() {
+            const content = doorElement.querySelector('.door-back-content');
+            if (content) {
+                content.classList.add('is-visible');
+            }
+            setTimeout(showModal, 400); // 400ms matches the fade-in duration
+        }, { once: true });
+    } else {
+        setTimeout(showModal, 800);
+    }
 }
 
 /**
@@ -303,6 +277,7 @@ function showMessage(title, message) {
  * Opdaterer dato-information og test-knap i headeren
  */
 function updateDateInfo() {
+    const isTestMode = calendarData.config.isTestMode || false;
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = today.toLocaleDateString('da-DK', options);
     
