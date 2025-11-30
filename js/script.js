@@ -133,7 +133,7 @@ function createCalendar() {
  */
 function openDoor(day) {
     const doorElement = document.querySelector(`.door[data-day="${day}"]`);
-    if (doorElement.classList.contains('locked')) return; // Still prevent locked doors
+    if (doorElement.classList.contains('locked')) return;
 
     const isDoorAlreadyVisuallyOpen = doorElement.classList.contains('open');
 
@@ -145,9 +145,10 @@ function openDoor(day) {
         }
 
         doorElement.classList.add('was-opened');
-        closeModal(); 
+        closeModal();
         doorElement.classList.add('open');
 
+        // Original logic: create content as sibling to door-inner
         if (!doorElement.querySelector('.door-back-content')) {
             const data = calendarData[day];
             if (data) {
@@ -159,6 +160,7 @@ function openDoor(day) {
                 `;
                 doorElement.appendChild(content);
 
+                // Use a short delay to trigger the CSS transition
                 setTimeout(() => {
                     content.classList.add('is-visible');
                 }, 200);
@@ -168,6 +170,7 @@ function openDoor(day) {
         closeModal();
     }
 
+    // Show the modal after the door flip and content fade have started
     setTimeout(() => {
         const data = calendarData[day];
         if (!data) {
@@ -242,11 +245,11 @@ function openDoor(day) {
         });
 
         Promise.all(imagePromises).then(() => {
-            void modal.offsetHeight; 
+            void modal.offsetHeight;
             modal.classList.add('is-visible');
         });
-        
-    }, isDoorAlreadyVisuallyOpen ? 0 : 900);
+
+    }, isDoorAlreadyVisuallyOpen ? 0 : 1000);
 }
 
 /**
