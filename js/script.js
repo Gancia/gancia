@@ -246,7 +246,7 @@ function openDoor(day) {
             modal.classList.add('is-visible');
         });
         
-    }, isDoorAlreadyVisuallyOpen ? 0 : 300);
+    }, isDoorAlreadyVisuallyOpen ? 0 : 900);
 }
 
 /**

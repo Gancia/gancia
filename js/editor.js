@@ -71,10 +71,17 @@ document.addEventListener('DOMContentLoaded', () => {
         calendarData.config.logoUrl = configLogoUrl.value;
         calendarData.config.isTestMode = configTestMode.checked;
 
+        const dayData = currentDay ? getCurrentDayDataFromForm() : null;
+        // If validation fails (returns null), don't save the state.
+        if (currentDay && dayData === null) {
+            console.warn("Autosave skipped: Form data is invalid (e.g., a quiz is missing a correct answer).");
+            return;
+        }
+
         const stateToSave = {
             config: calendarData.config,
             currentDay: currentDay,
-            dayData: currentDay ? getCurrentDayDataFromForm() : null
+            dayData: dayData
         };
         localStorage.setItem('julekalenderEditorState', JSON.stringify(stateToSave));
     }, 1000);
@@ -420,7 +427,12 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'video':
                  contentHtml = `<label>YouTube Embed URL</label><input type="text" class="block-value" value="${block.value}">`; break;
             case 'quiz':
-                const optionsHtml = block.value.options.map((option, i) => `<div class="quiz-option"><input type="radio" name="correct-answer-${index}" ${i === block.value.correctIndex ? 'checked' : ''}><input type="text" class="quiz-option-text" value="${option}"></div>`).join('');
+                const optionsHtml = block.value.options.map((option, i) => `
+                    <div class="quiz-option">
+                        <input type="radio" name="correct-answer-${index}" ${i === block.value.correctIndex ? 'checked' : ''}>
+                        <input type="text" class="quiz-option-text" value="${option}">
+                        <button type="button" class="btn-danger btn-remove-option" aria-label="Fjern svarmulighed" style="padding: 2px 8px; line-height: 1;">&times;</button>
+                    </div>`).join('');
                 contentHtml = `<label>Quiz-spørgsmål</label>${createFormattingToolbar()}<div class="quiz-question wysiwyg-editor" contenteditable="true">${block.value.question}</div><label style="margin-top: 1rem;">Svarmuligheder (vælg den korrekte)</label><div class="quiz-options-container">${optionsHtml}</div><button class="btn-secondary btn-add-option" style="margin-top: .5rem;">Tilføj svarmulighed</button><label style="margin-top: 1rem;">Forklaring efter svar</label>${createFormattingToolbar()}<div class="quiz-explanation wysiwyg-editor" contenteditable="true">${block.value.explanation}</div>`; break;
             case 'custom-box':
                 const icons = ['info', 'help-circle', 'book-open', 'star', 'check-circle', 'x-circle', 'message-square', 'edit', 'award', 'gift', 'lightbulb', 'file-text', 'image', 'video', 'flag', 'list', 'map-pin', 'settings', 'thumbs-up', 'zap'];
@@ -489,7 +501,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         if (block.type === 'quiz') {
-            wrapper.querySelector('.btn-add-option').addEventListener('click', (e) => { e.preventDefault(); const optionContainer = wrapper.querySelector('.quiz-options-container'); const newOption = document.createElement('div'); newOption.className = 'quiz-option'; newOption.innerHTML = `<input type="radio" name="correct-answer-${index}"><input type="text" class="quiz-option-text" value="">`; optionContainer.appendChild(newOption); });
+            const quizOptionsContainer = wrapper.querySelector('.quiz-options-container');
+
+            // Event delegation for removing options
+            quizOptionsContainer.addEventListener('click', (e) => {
+                if (e.target.matches('.btn-remove-option')) {
+                    if (quizOptionsContainer.children.length > 2) {
+                        e.target.closest('.quiz-option').remove();
+                        markChange();
+                    } else {
+                        alert('En quiz skal have mindst 2 svarmuligheder.');
+                    }
+                }
+            });
+
+            // Add new option
+            wrapper.querySelector('.btn-add-option').addEventListener('click', (e) => {
+                e.preventDefault();
+                const newOption = document.createElement('div');
+                newOption.className = 'quiz-option';
+                newOption.innerHTML = `
+                    <input type="radio" name="correct-answer-${index}">
+                    <input type="text" class="quiz-option-text" value="">
+                    <button type="button" class="btn-danger btn-remove-option" aria-label="Fjern svarmulighed" style="padding: 2px 8px; line-height: 1;">&times;</button>
+                `;
+                quizOptionsContainer.appendChild(newOption);
+                markChange();
+            });
         }
 
                         wrapper.querySelectorAll('.formatting-toolbar').forEach(toolbar => {
@@ -722,17 +760,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function getCurrentDayDataFromForm() {
         if (!currentDay) return null;
         const newBody = [];
-        contentBlocksContainer.querySelectorAll('.block').forEach(blockEl => {
+        const blocks = contentBlocksContainer.querySelectorAll('.block');
+
+        for (const blockEl of blocks) {
             const type = blockEl.dataset.type;
             let newBlock;
             switch (type) {
-                 case 'question':
+                case 'question':
                     const checkedTitleTypeInput = blockEl.querySelector(`input[name="question_type_${blockEl.dataset.index}"]:checked`);
-                    newBlock = { 
-                        type: 'question', 
-                        value: { 
-                            text: blockEl.querySelector('.block-value').innerHTML, 
-                            titleType: checkedTitleTypeInput ? checkedTitleTypeInput.value : 'question' // Fallback to 'question'
+                    newBlock = {
+                        type: 'question',
+                        value: {
+                            text: blockEl.querySelector('.block-value').innerHTML,
+                            titleType: checkedTitleTypeInput ? checkedTitleTypeInput.value : 'question'
                         }
                     };
                     break;
@@ -747,32 +787,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'quiz':
                     const options = Array.from(blockEl.querySelectorAll('.quiz-option-text')).map(input => input.value);
                     const correctRadio = blockEl.querySelector('input[type="radio"]:checked');
-                    let correctIndex = 0;
-                    if(correctRadio){
-                        const allRadios = Array.from(blockEl.querySelectorAll('input[type="radio"]'));
-                        correctIndex = allRadios.indexOf(correctRadio);
+                    
+                    if (!correctRadio) {
+                        // Validation failed: a quiz is missing a correct answer.
+                        return null; 
                     }
-                    newBlock = { type, value: { 
-                        question: blockEl.querySelector('.quiz-question').innerHTML, 
-                        options, 
-                        correctIndex, 
-                        explanation: blockEl.querySelector('.quiz-explanation').innerHTML 
+
+                    const allRadios = Array.from(blockEl.querySelectorAll('input[type="radio"]'));
+                    const correctIndex = allRadios.indexOf(correctRadio);
+                    
+                    newBlock = { type, value: {
+                        question: blockEl.querySelector('.quiz-question').innerHTML,
+                        options,
+                        correctIndex,
+                        explanation: blockEl.querySelector('.quiz-explanation').innerHTML
                     } };
                     break;
                 case 'custom-box':
-                    newBlock = { type: 'custom-box', value: { 
-                        icon: blockEl.querySelector('.custom-box-icon-hidden-input').value, 
-                        title: blockEl.querySelector('.custom-box-title').value, 
-                        content: blockEl.querySelector('.custom-box-content').innerHTML, 
+                    newBlock = { type: 'custom-box', value: {
+                        icon: blockEl.querySelector('.custom-box-icon-hidden-input').value,
+                        title: blockEl.querySelector('.custom-box-title').value,
+                        content: blockEl.querySelector('.custom-box-content').innerHTML,
                     }}; break;
                 case 'citat':
-                    newBlock = { type: 'citat', value: { 
-                        text: blockEl.querySelector('.quote-text').innerHTML, 
-                        author: blockEl.querySelector('.quote-author').value, 
+                    newBlock = { type: 'citat', value: {
+                        text: blockEl.querySelector('.quote-text').innerHTML,
+                        author: blockEl.querySelector('.quote-author').value,
                     }}; break;
             }
             newBody.push(newBlock);
-        });
+        }
         return { title: dayTitle.value, emoji: dayEmoji.value, body: newBody };
     }
 
@@ -803,7 +847,12 @@ document.addEventListener('DOMContentLoaded', () => {
         calendarData.config.isTestMode = configTestMode.checked;
 
         if (currentDay) {
-            calendarData[currentDay] = getCurrentDayDataFromForm();
+            const dayData = getCurrentDayDataFromForm();
+            if (!dayData) {
+                alert('Handlingen blev afbrudt: En quiz mangler et korrekt svar. Vælg venligst et korrekt svar for alle quizzer, før du gemmer.');
+                return;
+            }
+            calendarData[currentDay] = dayData;
         }
 
         const jsString = `const calendarData = ${JSON.stringify(calendarData, null, 4)};`;
@@ -823,9 +872,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function previewCurrentDay() {
+        if (!currentDay) {
+            alert('Vælg venligst en dag først for at teste den.');
+            return;
+        }
         const dayData = getCurrentDayDataFromForm();
         if (!dayData) {
-            alert('Vælg venligst en dag først for at teste den.');
+            alert('Forhåndsvisning afbrudt: En quiz mangler et korrekt svar. Vælg venligst et korrekt svar for alle quizzer, før du tester.');
             return;
         }
         renderPreviewModal(dayData);
