@@ -599,6 +599,6 @@ const calendarData = {
             22,
             8
         ],
-        "isTestMode": true
+        "isTestMode": false
     }
 };
