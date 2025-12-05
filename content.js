@@ -31,7 +31,35 @@ const calendarData = {
             },
             {
                 "type": "html",
-                "value": "<a target=\"_blank\" href=\"https://github.com/Gancia/Julekalender\">DOWNLOAD julekalenderen til eget brug</a>"
+                "value": "<h3>Videoer</h3>\n<p>Her under har jeg lagt et par videoer, som viser hvordan man bruger kalenderen</p>\n<p> Det kan være et ret sjovt og kreativt værktøj, hvor du kan lave din egen kalender, eller få eleverne til at lave en.</p>\n<small> jeg lover lågerne fremadrettet bliver noget kortere</small>"
+            },
+            {
+                "type": "html",
+                "value": "<h5>Video</h5>"
+            },
+            {
+                "type": "video",
+                "value": "https://www.youtube.com/embed/..."
+            },
+            {
+                "type": "html",
+                "value": "<h5>Video</h5>"
+            },
+            {
+                "type": "video",
+                "value": "https://www.youtube.com/embed/..."
+            },
+            {
+                "type": "html",
+                "value": "<h5>Video</h5>"
+            },
+            {
+                "type": "video",
+                "value": "https://www.youtube.com/embed/..."
+            },
+            {
+                "type": "html",
+                "value": "<a target=\"_blank\" href=\"https://github.com/Gancia/Julekalender\">DOWNLOAD</a>"
             }
         ]
     },
