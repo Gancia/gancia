@@ -347,23 +347,25 @@ const calendarData = {
         ]
     },
     "12": {
-        "title": "Dag 12: Undersøgelsesbaseret Læring",
+        "title": "Dag 12: Julefrokost",
         "emoji": "🔬",
         "body": [
             {
-                "type": "question",
+                "type": "custom-box",
                 "value": {
-                    "text": "Hvad er kernen i 'Inquiry-Based Learning'?",
-                    "titleType": "question"
+                    "icon": "gift",
+                    "title": "Glædelig fredag, med julefrokost.",
+                    "content": "Så er det i dag i holder julefrokost, og første gang jeg ikke deltager. Det må endelig ikke stoppe jer fra at have den bedste fredag!<div><br></div><div>Jeg har til jer i dag lavet en rebus. Den er så sober at man også kan tage den med i klasserne.</div><div>Under linker jeg også til det online værktøj, hvor du selv kan lave dem.</div>"
                 }
             },
             {
-                "type": "video",
-                "value": "https://www.youtube.com/embed/u84ZsS6niPc"
+                "type": "image",
+                "value": "assets/rebus.png",
+                "alt": "Rebus om jul"
             },
             {
-                "type": "answer",
-                "value": "Kernen er, at eleverne selv driver læringsprocessen ved at stille spørgsmål, undersøge og udforske. Lærerens rolle skifter fra 'formidler' til 'facilitator'."
+                "type": "html",
+                "value": "<a href=\"https://rebuz.dk/\" target=\"_blank\">Lav en rebus med rebuz.dk</a>"
             }
         ]
     },
