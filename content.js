@@ -370,9 +370,77 @@ const calendarData = {
         ]
     },
     "13": {
-        "title": "Dag 13: Lørdag",
+        "title": "Dag 13: Quiz-dag!",
         "emoji": "❓",
-        "body": []
+        "body": [
+            {
+                "type": "refleksion",
+                "value": "<p data-path-to-node=\"4,0\">Lørdag er vores fun day! Ja, den er sørme god nok – det er quiz-tid!</p><p data-path-to-node=\"4,1\">Nedenfor har jeg lavet en række forskellige spørgsmål om ting, du måske har oplevet i din tid på vores skønne arbejdsplads (det har jeg i hvert fald). Om ikke andet giver det dig mulighed for at spørge ind til tingene på mandag over morgenkaffen eller bønnesalaten.</p>"
+            },
+            {
+                "type": "quiz",
+                "value": {
+                    "question": "Hvad hed damen med alle kasketterne?",
+                    "options": [
+                        "Turban-Tove",
+                        "Malene Ringvad",
+                        "Kirsten Jensen",
+                        "Gerda Skov"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "Malene var damen med en ja- og nej-hat/kasket...\n\n...og hun havde vist flere af dem, da hun underholdte os på <u>et meget langt møde.\n</u>\nJeg husker en masse øvelser, som skulle få os til at tale bedre sammen som personale/ledelse – men jeg er den dag i dag, desværre, stadig lidt usikker på, hvad formålet med hatten var."
+                }
+            },
+            {
+                "type": "quiz",
+                "value": {
+                    "question": "Vi havde besøg af en forhenværende håndbold spiller, Camilla Andersen?, hun havde en meget vigtigt øvelse til os, hvad var det?",
+                    "options": [
+                        "Gribe bolden",
+                        "Stole dans",
+                        "Garnnøglet",
+                        "Hold Trivsels-ballonen i luften"
+                    ],
+                    "correctIndex": 0,
+                    "explanation": "Vi skulle gribe eller tabe bolde, det var noget med work-life-balance. Man kan ikke gøre og alt og må overlade noget til andre, en metafor der er meget skudt ved siden af skolen - mener jeg. Det er længere debat, som kan tages en anden gang.\n\nJeg beder til vi dog aldrig oplever denne:<div><span style=\"font-size: 0.95rem;\">🎈 </span><b style=\"font-size: 0.95rem;\">\"Hold Trivsels-ballonen i luften\"</b><p data-path-to-node=\"5\">Teamet får en ballon (som symboliserer \"kerneopgaven\" eller \"trivslen\"). I skal nu holde den i luften, men I må ikke bruge hænderne – kun albuer eller næser.</p><ul data-path-to-node=\"6\"><li><p data-path-to-node=\"6,0,0\"><b>Den påståede pointe:</b> \"Vi skal løfte i flok og være agile.\"</p></li><li><p data-path-to-node=\"6,1,0\"><b>Virkeligheden:</b> Voksne mennesker, der nikker febrilsk til en ballon, mens de håber, chefen ikke filmer.</p></li></ul></div>"
+                }
+            },
+            {
+                "type": "quiz",
+                "value": {
+                    "question": "I en kort periode skulle vi tjekke ind med hinaden før vores møder, hvordan var det vi skulle tjekke ind med hianden?",
+                    "options": [
+                        "Humørkort",
+                        "Ledige stole",
+                        "Metaforiske Vejrudsigter"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "Vi skulle fortælle, hvor mange ledige eller optaget mentale stole vi havde. Det var vist noget med at kunne få parkert sine tanker inden et møde, jeg er usikker på ophavspersonen.<div><br></div><div>Jeg tror ikke vi har noget officelt tjek ind til starten af vores møder mere.</div>"
+                }
+            },
+            {
+                "type": "quiz",
+                "value": {
+                    "question": "Pif paf puf - var stående joke omkring min start på vores skole. Det var sådan set bare PAF, men hvad står det mon for?",
+                    "options": [
+                        "Pædagogiskanalyse og forandring ",
+                        "Pseudo-Arbejde & Frugtordning",
+                        "Pædagogisk Afmagt & Frustration",
+                        "Papir, Arbejdsgrupper & Flipover"
+                    ],
+                    "correctIndex": 0,
+                    "explanation": "Måske skal vi faktisk stadig arbejde med det i Ringsted - en søgning på nettet viser det i hvert fald stadig.<div><br></div><div>Vi havde en leder, dem har vi haft rigtig, rigtig, rigtig, mange af. Denne leder blev spurgt ind til, hvordan det gik med implamenteringen af PAF hos os, svaret \"Pif Paf, Puf - hvem ved egenligt hvad det er?\"</div>"
+                }
+            },
+            {
+                "type": "custom-box",
+                "value": {
+                    "icon": "flag",
+                    "title": "Færdig",
+                    "content": "<p data-path-to-node=\"4,0\">Hvor mange rigtige fik du? Var der noget, der virkede ærgerligt at være gået glip af?</p><p data-path-to-node=\"4,0\">(No worries: Den uendelige, omskiftelige folkeskole – og behovet for at sætte sit præg på den – kaster os snart ud i nye projekter, konsulenter og fix-it-all-løsninger).</p>"
+                }
+            }
+        ]
     },
     "14": {
         "title": "Dag 14: Søndag",
