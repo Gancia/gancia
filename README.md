@@ -13,6 +13,10 @@ Projektet er organiseret i mapper for at gøre det mere overskueligt:
 - **editor.html**: Den side, du bruger til at redigere indholdet.
 - **content.js**: Den vigtigste fil, der indeholder al data (titler, tekster, billeder osv.) til alle 24 låger i form af en JavaScript-variabel.
 
+### Loading-skærm
+
+For at forbedre brugeroplevelsen under indlæsning af kalenderen, er der nu en loading-skærm i `index.html`. Denne skærm vises, indtil alt indhold er indlæst og klar til visning, hvilket sikrer et mere strømlinet indtryk.
+
 ---
 
 ## Sådan bruges Editoren
@@ -45,6 +49,8 @@ Brug dropdown-menuen til at vælge den dag (1-24), du vil redigere. Hvis der all
 
 ### 5. Rediger Indholdsblokke
 Hver låges indhold er bygget op af "blokke". Du kan tilføje, fjerne og ændre rækkefølgen af disse blokke.
+
+-   **Forbedret stabilitet:** Editoren håndterer nu indholdsblokke mere robust, især ved tilføjelse og sletning af elementer i quizzer.
 -   **Tilføj en blok**: Klik på en af knapperne nederst (f.eks. "Tilføj Spørgsmål", "Tilføj Billede") for at tilføje en ny blok til bunden.
 -   **Fjern en blok**: Klik på den røde "Fjern"-knap i øverste højre hjørne af en blok. Du vil blive bedt om at bekræfte handlingen.
 -   **Ændr rækkefølge**: Klik og hold på ikonet med de to lodrette rækker af prikker (`<i data-lucide="grip-vertical"></i>`) i øverste venstre hjørne af en blok, og træk den op eller ned.
@@ -127,8 +133,8 @@ En interaktiv multiple-choice quiz med øjeblikkelig feedback.
 - **`value`**: Et objekt med fire felter:
     - **`question`**: Spørgsmålsteksten.
     - **`options`**: En liste af strenge med svarmulighederne.
-    - **`correctIndex`**: Tallet på det korrekte svar i `options`-listen. **Vigtigt:** Det første svar er `0`, det andet er `1`, osv.
-    - **`explanation`**: Den tekst, der vises som forklaring, efter brugeren har svaret.
+    - **`correctIndex`**: Tallet på det korrekte svar i `options`-listen. **Vigtigt:** Det første svar er `0`, det andet er `1`, osv. (kan nu være et hvilket som helst gyldigt indeks efter de seneste rettelser).
+    - **`explanation`**: Den tekst, der vises som forklaring, efter brugeren har svaret. Understøtter nu rich text og linjeskift robust.
 ```javascript
 {
   "type": "quiz",
@@ -141,7 +147,7 @@ En interaktiv multiple-choice quiz med øjeblikkelig feedback.
       "Analyseret"
     ],
     "correctIndex": 2,
-    "explanation": "Helt korrekt! 'A' står for Achievable (Opnåeligt) eller Acceptabelt."
+    "explanation": "Helt korrekt! 'A' står for Achievable (Opnåeligt) eller Acceptabelt. \n\n Dette er en forklaring over flere linjer med **fed** tekst."
   }
 }
 ```
