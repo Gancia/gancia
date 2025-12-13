@@ -46,6 +46,18 @@ async function initializeApp() {
         lucide.createIcons();
     }
     startSnowfall();
+
+    // Show main content and hide loader
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const mainContainer = document.querySelector('.calendar-main-container');
+
+    mainContainer.classList.remove('content-hidden');
+    
+    // Fade out the loader
+    loadingOverlay.style.opacity = '0';
+    loadingOverlay.addEventListener('transitionend', () => {
+        loadingOverlay.style.display = 'none';
+    }, { once: true });
 }
 
 /**
@@ -223,7 +235,7 @@ function handleQuizAnswer(buttonElement, isCorrect) {
     const quizBlock = buttonElement.closest('.quiz-block');
     const options = quizBlock.querySelectorAll('.quiz-option');
     const feedbackEl = quizBlock.querySelector('.quiz-feedback');
-    const explanation = decodeURIComponent(quizBlock.dataset.explanation);
+    const explanation = decodeURIComponent(quizBlock.dataset.explanation).replace(/\n/g, '<br>');
 
     options.forEach(option => {
         option.disabled = true;
@@ -238,7 +250,7 @@ function handleQuizAnswer(buttonElement, isCorrect) {
         });
     }
 
-    feedbackEl.innerHTML = `<p class="quiz-explanation">${explanation}</p>`;
+    feedbackEl.innerHTML = `<div class="quiz-explanation">${explanation}</div>`;
 }
 
 /**
