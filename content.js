@@ -461,22 +461,24 @@ const calendarData = {
         ]
     },
     "15": {
-        "title": "Quiz: Indre vs. Ydre Motivation",
+        "title": "Dag 15: MST / adfærdsgudning",
         "emoji": "🔥",
         "body": [
             {
-                "type": "quiz",
+                "type": "question",
                 "value": {
-                    "question": "En elev øver sig på klaver, udelukkende fordi de elsker lyden af musik. Hvilken form for motivation er dette et eksempel på?",
-                    "options": [
-                        "Ydre motivation",
-                        "Indre motivation",
-                        "Social motivation",
-                        "Præstationsmotivation"
-                    ],
-                    "correctIndex": 1,
-                    "explanation": "Præcis! Glæden ved selve aktiviteten er kernen i indre motivation. Ydre motivation ville være, hvis eleven øvede sig for at få en belønning eller undgå straf."
+                    "text": "<div>MST er noget, jeg stødte på, da jeg skulle hjælpe en elev i en meget udfordret situation.</div><div><br></div><div>Kort og godt handler det om styret adfærdsregulering. Det går ud på at skabe en ramme, hvor eleven kan opleve at lykkes, og hvor der er en begrænset, men tydelig konsekvens og guidning, når eleven træder udenfor rammen.</div><div><br></div><div>Det ydre (Rammen): Først skulle vi rammesætte det ydre. Her var klasserummet, skemaet og hverdagens struktur under lup. Vi indførte faste hente-tider, pauser og meget begrænsede \"faglige\" aktiviteter. Hvilket bord, stol, hvor skema hæng på væggen osv, altsamme for minske og styre indtryk hos eleven.</div><div>Vi byggede et stærkt og solidt stillads omkring eleven, særligt i starten. Meget vigtigt at understrege, at der blev afviget utroligt lidt fra vores aftalte plan, uanset hvilken voksen eleve var sammen med.</div><div><br></div><div>Det indre (Adfærden): Vi afkodede, hvad eleven reagerede særligt positivt på – her var det social kontakt. Dette blev vores styringsredskab. Når regler eller aftaler ikke blev overholdt, afbrød vi strategisk samværet.</div><div><br></div><div>Eksempel: \"Du gør ikke helt det, vi aftalte, så nu henter jeg lige en kop kaffe.\"</div><div><br></div><div>Herved afbrød vi samværet, og eleven fik ikke opfyldt sit mål i øjeblikket. Det er vigtigt at sige, at det ikke var en \"straf\", men en styret regel for vores samvær: Ingen aftale = intet samvær.</div><div><br></div><div>MST er meget lavet til ADHD, men jeg vil mene der kan skimtes meget til den når man oplever en elev med en addfærd der virkelig udfordre.</div><div><br></div><div>Der er et link herunder til en længere guide, hvis du vil vide mere.</div>",
+                    "titleType": "principle"
                 }
+            },
+            {
+                "type": "image",
+                "value": "assets/cirkelmst.png",
+                "alt": "Model lavet af AI, MST støtte lavet cirkulært til brug"
+            },
+            {
+                "type": "html",
+                "value": "<center><a href=\"https://viden.sl.dk/media/5925/mst-guide-adhdhandicapvenlig-2.pdf\" target=\"_blank\" style=\"background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;\">Læs guiden her</a></center>"
             }
         ]
     },
