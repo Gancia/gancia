@@ -503,7 +503,55 @@ const calendarData = {
     "17": {
         "title": "Dag 17: Hvem er den voksne",
         "emoji": "🧑‍🤝‍🧑",
-        "body": []
+        "body": [
+            {
+                "type": "custom-box",
+                "value": {
+                    "icon": "",
+                    "title": "Gamle vin på nye flasker?",
+                    "content": "Uanset hvad, så handler lågen i dag om, at kunne stoppe op og ændre sit syn på eleven.<br><br>Jeg tror det meste af det kommer fra en af bøgerne som, hvis man er medlem af DLF gratis kan hente. under bogserien:&nbsp;Bogserien \"Pædagogisk Rækkevidde\".<div><br>Det handler om de elever som udfordre og hvordan man måske kan få det bedre med dem.<br><br></div><div>Anyway det er sikkert ting i kender - men det handler om at få sig selv til stoppe og tænke, hvem er den voksne her og blive i stand til at spille eleven god.</div>"
+                }
+            },
+            {
+                "type": "image",
+                "value": "assets/tænd.jpg",
+                "alt": "Tændstik øvelsen AI billede"
+            },
+            {
+                "type": "custom-box",
+                "value": {
+                    "icon": "",
+                    "title": "Lomme-øvelsen",
+                    "content": "<div>Ret simpel øvelse: Man vælger en elev, som man ofte føler udfordrer én. Ens voksenopgave er så at fylde 3-10 tændstikker i venstre lomme om morgenen. Det går ud på at få flyttet alle tændstikkerne fra venstre til højre lomme i løbet af dagen.</div><div><br></div><div>Det sker ved, at man har en positiv interaktion med eleven. Det kan være alt fra at få sagt ordentligt godmorgen til at rose, når man ser eleven f.eks. åbne sin madpakke stille.</div><div><br></div><div>Gør man det her over et par dage, får man langsomt ændret det narrativ, man selv har fået bygget op om eleven. Man begynder at få øje på den gode adfærd, som man så kan bygge videre på.</div>"
+                }
+            },
+            {
+                "type": "image",
+                "value": "assets/udfordre.jpg",
+                "alt": "Udforende elev AI"
+            },
+            {
+                "type": "custom-box",
+                "value": {
+                    "icon": "",
+                    "title": "Spil god",
+                    "content": "<div>Jeg havde engang en elev, som jeg ærligt talt var kørt lidt træt i. Men så kiggede jeg mig selv i spejlet og sagde: 'Det er mig, der er den voksne her'.</div><div><br></div><div>Jeg vidste, at eleven var vild med forsøg i naturfag. Derfor tilrettelagde jeg en opgave, hvor eleven skulle øve et forsøg og teorien bag sammen med mig, som han bagefter skulle vise foran hele klassen. Det gjorde, at jeg pludselig oplevede en masse gode ting ved eleven, og han fik nok også et andet billede af mig. Jeg så en elev, der faktisk kunne, når jeg hjalp. Og det gav os en fælles referenceramme og et nyt narrativ, som vi begge kunne vende tilbage, som gjorde at vi nåede meget meget længere end man skulle have troet.</div><div><br></div><div>Det handler om at spille eleven god.</div><div><br></div><div>Det behøver ikke altid være store forsøg i naturfag. Det handler om at stoppe op og bevidst tilrettelægge situationer, hvor man ved, at eleven lykkes. Det kan være helt simple ting som:</div><div><br></div><div>At give eleven en bestemt hjælper-rolle, du er den som tegner de ord jeg siger/whatever virker.</div><div>At stille en opgave, man ved de er eksperter i, du kan det der på pc'en kan du ikke vise de andre det.</div>"
+                }
+            },
+            {
+                "type": "image",
+                "value": "assets/skab.jpg",
+                "alt": "Fællesskab AI"
+            },
+            {
+                "type": "custom-box",
+                "value": {
+                    "icon": "",
+                    "title": "Fællesskab",
+                    "content": "<div>Noget jeg er stor fortaler for er fællesskabet, både i skolen og særligt i klassen. Derfor kan jeg huske, at jeg også har haft læst om, hvordan det aldrig bare er barnets skyld, når tingene brænder på.</div><div><br></div><div>Tit handler det om, at eleverne bliver så usikre på deres plads i gruppen, at de begynder at holde hinanden udenfor bare for selv at føle, at de hører til. Som de voksne er det vores opgave at skabe et fællesskab, hvor ingen behøver at kæmpe for at være med.</div><div><br></div><div>Det handler om at skabe faglige fællesskaber.</div><div><br></div><div>I stedet for altid at fokusere på konflikterne, så handler det om at give klassen noget fælles at være optaget af – noget 'tredje', som vi er sammen om. Det kunne være:</div><div><br></div><div>Et fælles projekt, hvor alles styrker kommer i spil.</div><div><br></div><div>At vi som lærere italesætter klassen som et 'vi' i stedet for en samling individer.</div><div><br></div><div>At vi stopper med at lede efter en skyldig, når noget går galt, og i stedet spørger: 'Hvad skete der i vores fællesskab lige her?'.</div><div><br></div><div>Det handler om at opleve at høre til, så man er en del af noget større og derved måske hellere vil bidrage positivt.</div>"
+                }
+            }
+        ]
     },
     "18": {
         "title": "Dag 18: Myten om Læringsstile",
@@ -512,30 +560,29 @@ const calendarData = {
             {
                 "type": "question",
                 "value": {
-                    "text": "Teorien om læringsstile (f.eks. Visuel, Auditiv, Kinæstetisk) er populær, men har meget lidt støtte i forskningen. Hvorfor er det vigtigere at fokusere på *indholdet* frem for en specifik 'læringsstil'?",
-                    "titleType": "question"
+                    "text": "<p data-path-to-node=\"0\">Begrebet læringsstile dækker over teorien om, at alle mennesker har en foretrukken måde at modtage, bearbejde og huske ny information på. Kernen i teorien er, at hvis læreren matcher sin undervisning til elevens specifikke stil, så lærer eleven både hurtigere og bedre.</p><p data-path-to-node=\"0\">Hvad er læringsstile?<br>De fleste kender læringsstile gennem den såkaldte VAK-model (eller VARK), som opdeler folk i typer:</p><p data-path-to-node=\"0\"><ul><li>Visuel: Lærer bedst ved at se (billeder, grafer, film, læsning).</li><li>Auditiv: Lærer bedst ved at lytte (oplæg, diskussioner, podcasts).</li><li>Kinæstetisk (eller taktil): Lærer bedst ved at røre og gøre (bevægelse, forsøg, bygge modeller).</li></ul></p><p data-path-to-node=\"0\">Tanken er, at en \"visuel elev\" vil have svært ved at forstå en rent mundtlig forklaring, medmindre der kommer en tegning på tavlen.</p><p data-path-to-node=\"0\"><br></p><p data-path-to-node=\"0\">Det er bl.a.&nbsp; Dunn og Dunn, Howard Gardner, bare for nævne nogen som har været med til udbrede denne teori.</p><p data-path-to-node=\"0\">Det er den største omgang <b>LORT</b>, som er blevet udbredt - undskyld med det er virkelig en af mine kæpheste, at det her skal dø stille og roligt. Der er uhyggeligt lidt forskning der bakker op omkring dette. Det kommer vi tættere på i denne låge.<br><br></p><p data-path-to-node=\"0\">Hvis har du har 15 minutter, vil jeg kraftigt anbefalede at du ser viden under.</p>",
+                    "titleType": "principle"
                 }
             },
             {
-                "type": "image",
-                "value": "https://via.placeholder.com/400x250/005a5b/ffffff?text=Variation+i+Undervisning",
-                "alt": "Fire ikoner, der repræsenterer forskellige undervisningsmetoder: et øje (visuelt), et øre (auditivt), en hånd (kinæstetisk) og en bog (tekst)."
+                "type": "video",
+                "value": "https://www.youtube.com/embed/rhgwIhB58PA?si=-OvSc6UoPIQ7HHj_"
             },
             {
-                "type": "answer",
-                "value": "Fordi det er emnets natur, der bør diktere præsentationsformen. Geometri *bør* præsenteres visuelt, og musik *bør* præsenteres auditivt, uanset elevens præference. Effektiv undervisning handler om at variere metoderne for *alle* elever, ikke om at matche en mytisk 'stil'."
+                "type": "html",
+                "value": "<div style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; border: 2px solid #e74c3c; border-radius: 10px; padding: 25px; background-color: #fff; margin: 20px auto;\">\n    <h2 style=\"color: #c0392b; margin-top: 0;\">⚠️ Læringsstile: Danske kilder</h2>\n\n    <div style=\"margin-bottom: 20px;\">\n        <strong>Ingen videnskabelig opbakning</strong><br>\n        Forskere verden over kalder ofte teorien for en \"neuromyte\". Der er ingen solid evidens for, at elever lærer bedre ved at få undervisning i deres foretrukne stil – tværtimod viser studier ingen effekt.\n        <br>👉 <a href=\"https://videnskab.dk/kultur-samfund/udbredt-undervisningsteori-hviler-paa-et-omstridt-videnskabeligt-grundlag/\" target=\"_blank\" style=\"color: #2980b9;\">Læs artiklen på Videnskab.dk</a>\n    </div>\n\n    <div style=\"margin-bottom: 20px;\">\n        <strong>En begrænsende etikette</strong><br>\n        At stemple elever (eller sig selv) som værende kun \"visuel\" eller \"auditiv\" kan fastlåse dem og hæmme deres udvikling. Hjernen lærer bedst, når sanserne kombineres (Dual Coding), ikke når de isoleres.\n        <br>👉 <a href=\"https://laerning.dk/laeringsstile/\" target=\"_blank\" style=\"color: #2980b9;\">Læs om myten på Laerning.dk</a>\n    </div>\n\n    <div style=\"margin-bottom: 0;\">\n        <strong>Et hav af modstridende modeller</strong><br>\n        Der findes over 70 forskellige modeller (som Dunn & Dunn og Kolb). Kritikken går på, at de ofte mangler pædagogisk fundament og primært fungerer som kommercielle produkter.\n        <br>👉 <a href=\"https://matematikdidaktik.dk/tema/laeringsstile/modeller-for-laeringsstile\" target=\"_blank\" style=\"color: #2980b9;\">Se oversigten på Matematikdidaktik.dk</a>\n    </div>\n\n</div>"
             },
             {
                 "type": "quiz",
                 "value": {
-                    "question": "En lærer vil undervise i fotosyntese. Hvad er den bedste tilgang ifølge moderne didaktik?",
+                    "question": "Der undervises i fotosyntese. Hvad er den bedste tilgang ifølge moderne didaktik?",
                     "options": [
                         "Finde ud af, hvem der er 'visuelle' elever, og kun vise dem diagrammer.",
                         "Kombinere flere metoder: Vise diagrammer, forklare processen mundtligt og lave et lille forsøg.",
                         "Lade eleverne læse en tekst og selv vælge, hvordan de vil lære."
                     ],
                     "correctIndex": 1,
-                    "explanation": "Korrekt! Den multimodale tilgang, hvor flere sanser og metoder aktiveres, er mest effektiv for *alle* elever. Det handler om at variere undervisningen, ikke at låse elever fast i båse."
+                    "explanation": " Den multimodale tilgang, hvor flere sanser og metoder aktiveres, er mest effektiv for *alle* elever. Det handler om at variere undervisningen, ikke at låse elever fast i båse. Selvom eleven måske har en forestilling om en bestemt læringsstil."
                 }
             }
         ]
