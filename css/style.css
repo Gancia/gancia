@@ -534,6 +534,8 @@ footer { margin-top: 40px; font-size: 0.875rem; color: rgba(255, 255, 255, 0.4);
     color: #3d405b;
     font-size: 0.95rem;
     line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 /* Style for Quote Block */
@@ -562,7 +564,6 @@ footer { margin-top: 40px; font-size: 0.875rem; color: rgba(255, 255, 255, 0.4);
 .question-box p,
 .answer-box p,
 .quiz-question,
-.quiz-explanation,
 .quote-block blockquote {
     white-space: pre-wrap;
     word-break: break-word; /* Prevents long unbreakable strings from overflowing */
@@ -710,4 +711,138 @@ footer { margin-top: 40px; font-size: 0.875rem; color: rgba(255, 255, 255, 0.4);
 /* Utility class to hide content */
 .content-hidden {
     visibility: hidden;
+}
+
+/* Modal Loader - NEW */
+.modal-loader {
+  /* display is controlled by inline styles in JS */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 20px;
+  min-height: 250px; /* Give it a minimum height */
+}
+
+/* Re-use the snowflake animation from the main loader */
+.modal-loader .snowflake-loader {
+  color: #005a5b; /* Match modal title color */
+  font-size: 2.5em;
+  animation: spin-loader 2s linear infinite;
+}
+
+.modal-loader p {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 1.25rem;
+    color: #005a5b; /* Match modal title color */
+}
+
+/* --- NEW DOOR ANIMATION STYLES --- */
+
+/* SWING
+   The .door element needs perspective to create the 3D space. */
+.door.door--swing {
+    perspective: 1000px;
+}
+/* The front of the door gets a new transform and origin. */
+.door.door--swing .door-front {
+    transform-origin: left center;
+    transition: transform 0.7s ease-in-out, opacity 0.7s ease-in-out;
+}
+/* When opened, it rotates on the Y-axis. We override opacity to keep it from disappearing. */
+.door.door--swing.was-opened .door-front {
+    transform: rotateY(-120deg);
+    opacity: 0.2;
+}
+
+
+/* SLIDE
+   The transition is changed to affect the transform property. */
+.door.door--slide .door-front {
+    transition: transform 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+/* When opened, it moves up. Opacity is overridden to 1 to prevent the default fade-out. */
+.door.door--slide.was-opened .door-front {
+    transform: translateY(-100%);
+    opacity: 1;
+}
+
+/* --- NEW DOOR DESIGN STYLES --- */
+
+/* Design: Gift Wrap */
+.door.door-design--wrap .door-front {
+    background-color: #d62828;
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+    background-size: 40px 40px;
+    border: 2px solid #f77f00;
+}
+/* Hide the default tape */
+.door.door-design--wrap::before {
+    display: none;
+}
+/* Ribbon */
+.door.door-design--wrap .door-front::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15%;
+    height: 100%;
+    background: #f77f00;
+    border-left: 2px solid #fcbf49;
+    border-right: 2px solid #fcbf49;
+    z-index: 4; /* Above tape */
+}
+.door.door-design--wrap .door-front::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 15%;
+    width: 100%;
+    background: #f77f00;
+    border-top: 2px solid #fcbf49;
+    border-bottom: 2px solid #fcbf49;
+    z-index: 4; /* Above tape */
+}
+.door.door-design--wrap .door-number {
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    z-index: 5; /* Above ribbon */
+}
+
+/* Design: Wood */
+.door.door-design--wood .door-front {
+    background-color: #8c5a3b;
+    background-image: linear-gradient(0deg, #664229 10%, #8c5a3b 10%, #8c5a3b 20%, #664229 20%, #664229 35%, #a1663f 35%, #a1663f 60%, #664229 60%);
+    border: 2px solid #513e31;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.5) inset;
+}
+/* Hide the default tape */
+.door.door-design--wood::before {
+    display: none;
+}
+.door.door-design--wood .door-number {
+    font-family: serif;
+    font-weight: bold;
+    color: #fefae0;
+    text-shadow: 1px 1px 3px #3b2d23;
+}
+
+/* Design: Minimal */
+.door.door-design--minimal .door-front {
+    background: #004b4c;
+    border: 1px solid #a3d1d1;
+}
+/* Hide the default tape */
+.door.door-design--minimal::before {
+    display: none;
+}
+.door.door-design--minimal .door-number {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 3rem;
+    color: #a3d1d1;
 }
