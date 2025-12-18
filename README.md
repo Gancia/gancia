@@ -13,9 +13,11 @@ Projektet er organiseret i mapper for at gøre det mere overskueligt:
 - **editor.html**: Den side, du bruger til at redigere indholdet.
 - **content.js**: Den vigtigste fil, der indeholder al data (titler, tekster, billeder osv.) til alle 24 låger i form af en JavaScript-variabel.
 
-### Loading-skærm
+### Loading-indikatorer
 
-For at forbedre brugeroplevelsen under indlæsning af kalenderen, er der nu en loading-skærm i `index.html`. Denne skærm vises, indtil alt indhold er indlæst og klar til visning, hvilket sikrer et mere strømlinet indtryk.
+For at forbedre brugeroplevelsen er der nu to loading-indikatorer:
+-   **Initial Loading-skærm:** Vises stadig ved opstart af kalenderen (`index.html`), indtil alt indhold er indlæst.
+-   **Låge-specifik Loading-indikator:** Når du åbner en låge, vil en midlertidig loading-indikator nu blive vist inde i modal-vinduet (pop-up'en). Denne indikator forbliver synlig, indtil alt medieindhold (billeder og videoer) er fuldt indlæst, hvilket forhindrer forsinkelser og forbedrer oplevelsen, især for låger med meget indhold.
 
 ---
 
@@ -51,6 +53,7 @@ Brug dropdown-menuen til at vælge den dag (1-24), du vil redigere. Hvis der all
 Hver låges indhold er bygget op af "blokke". Du kan tilføje, fjerne og ændre rækkefølgen af disse blokke.
 
 -   **Forbedret stabilitet:** Editoren håndterer nu indholdsblokke mere robust, især ved tilføjelse og sletning af elementer i quizzer.
+-   **Video-blokke:** Du kan nu indsætte YouTube-links direkte fra browserens adresselinje (f.eks. `https://www.youtube.com/watch?v=VIDEO_ID` eller `https://youtu.be/VIDEO_ID`). Editoren konverterer automatisk disse til det korrekte `embed`-format, når indholdet gemmes eller vises. Inputfeltet hedder nu blot "YouTube URL".
 -   **Tilføj en blok**: Klik på en af knapperne nederst (f.eks. "Tilføj Spørgsmål", "Tilføj Billede") for at tilføje en ny blok til bunden.
 -   **Fjern en blok**: Klik på den røde "Fjern"-knap i øverste højre hjørne af en blok. Du vil blive bedt om at bekræfte handlingen.
 -   **Ændr rækkefølge**: Klik og hold på ikonet med de to lodrette rækker af prikker (`<i data-lucide="grip-vertical"></i>`) i øverste venstre hjørne af en blok, og træk den op eller ned.
@@ -125,6 +128,16 @@ Indsætter et billede.
   "type": "image",
   "value": "assets/evaluering.png",
   "alt": "En illustration af en evalueringscyklus"
+}
+```
+
+### `video`
+Indsætter en YouTube-video. Editoren konverterer automatisk standard YouTube-links til det korrekte embed-format.
+- **`value`**: URL'en til YouTube-videoen. Kan være et standard browserlink eller et embed-link.
+```javascript
+{
+  "type": "video",
+  "value": "https://www.youtube.com/watch?v=dQw4w9WgXcQ" // Eller "https://www.youtube.com/embed/dQw4w9WgXcQ"
 }
 ```
 

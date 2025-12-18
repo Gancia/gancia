@@ -658,6 +658,11 @@ const calendarData = {
         "mainTitle": "Julekalender Byskovskolen",
         "subtitle": "Åben lågerne og have det sjovt - vi ses til Januar.",
         "logoUrl": "assets/logo.png",
+        "logoAltText": "Byskovskolen logo",
+        "doorType": "default",
+        "doorDesign": "default",
+        "showSnowfall": true,
+        "showSnowdrift": true,
         "isTestMode": false,
         "doorOrder": [
             10,
