@@ -6,6 +6,8 @@ const calendarContainer = document.getElementById('calendar-container');
 const modal = document.getElementById('modal');
 const modalTitle = document.getElementById('modal-title');
 const modalContent = document.getElementById('modal-content');
+const modalLoader = document.getElementById('modal-loader');
+const modalCloseButton = document.querySelector('.modal-close-button');
 const dateInfo = document.getElementById('date-info');
 
 // Dato-logik
@@ -35,7 +37,9 @@ async function initializeApp() {
     }
     
     // Populate header with dynamic data
-    document.getElementById('header-logo').src = calendarData.config.logoUrl || 'assets/logo.png';
+    const headerLogo = document.getElementById('header-logo');
+    headerLogo.src = calendarData.config.logoUrl || 'assets/logo.png';
+    headerLogo.alt = calendarData.config.logoAltText || 'Kalender-logo';
     document.getElementById('main-title').textContent = calendarData.config.mainTitle || 'Didaktisk Julekalender';
     document.getElementById('subtitle').textContent = calendarData.config.subtitle || 'En julekalender om didaktik';
     document.title = calendarData.config.mainTitle || 'Didaktisk Julekalender';
@@ -45,7 +49,14 @@ async function initializeApp() {
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
-    startSnowfall();
+    
+    // Conditionally start animations based on config
+    if (calendarData.config.showSnowfall !== false) {
+        startSnowfall();
+    }
+    if (calendarData.config.showSnowdrift === false) {
+        document.querySelector('.snowdrift-container').style.display = 'none';
+    }
 
     // Show main content and hide loader
     const loadingOverlay = document.getElementById('loading-overlay');
@@ -69,7 +80,7 @@ function createCalendar() {
     
     const doorNumbers = (calendarData.config && calendarData.config.doorOrder)
         ? calendarData.config.doorOrder
-        : [15, 8, 22, 3, 19, 11, 6, 24, 1, 14, 9, 20, 5, 17, 2, 12, 21, 7, 18, 4, 13, 23, 10, 16];
+        : Array.from({ length: 24 }, (_, i) => i + 1);
     
     const isDecember = currentMonth === 11;
     const isTestMode = calendarData.config.isTestMode || false;
@@ -77,6 +88,14 @@ function createCalendar() {
     doorNumbers.forEach(day => {
         const door = document.createElement('div');
         door.className = 'door';
+        const doorType = calendarData.config.doorType || 'default';
+        if (doorType !== 'default') {
+            door.classList.add(`door--${doorType}`);
+        }
+        const doorDesign = calendarData.config.doorDesign || 'default';
+        if (doorDesign !== 'default') {
+            door.classList.add(`door-design--${doorDesign}`);
+        }
         door.setAttribute('data-day', day);
         door.setAttribute('role', 'button');
         door.setAttribute('tabindex', '0');
@@ -137,11 +156,18 @@ function openDoor(day) {
     const showModal = () => {
         const data = calendarData[day];
         if (!data) {
-            console.error(`Intet indhold fundet for dag ${day} i content.json`);
+            console.error(`Intet indhold fundet for dag ${day}.`);
             return;
         }
-        modalContent.innerHTML = '';
+
+        // 1. Forbered modal og vis loader
         modalTitle.innerHTML = `${data.emoji || ''} ${data.title}`;
+        modalContent.innerHTML = ''; // Ryd tidligere indhold
+        modalContent.style.display = 'none';
+        modalLoader.style.display = 'flex';
+        modal.classList.add('is-visible'); // Vis modal med loader
+
+        // 2. Byg HTML-streng for indhold
         let contentHtml = '';
         let quizIdCounter = 0;
         data.body.forEach(block => {
@@ -159,7 +185,7 @@ function openDoor(day) {
                     contentHtml += `<div class="html-block">${block.value}</div>`;
                     break;
                 case 'image':
-                    contentHtml += `<div class="image-block"><img src="${block.value}" alt="${block.alt || 'Billede fra julekalenderen'}"></div>`;
+                    contentHtml += `<div class="image-block"><img src="${block.value}" alt="${block.alt || ''}"></div>`;
                     break;
                 case 'video':
                     contentHtml += `<div class="video-container"><iframe src="${block.value}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"></iframe></div>`;
@@ -181,48 +207,79 @@ function openDoor(day) {
                     break;
             }
         });
+
+        // 3. Sæt indhold og find medier, der skal ventes på
         modalContent.innerHTML = contentHtml;
-        modalContent.querySelectorAll('.quiz-block').forEach(quizBlock => {
-            quizBlock.querySelectorAll('.quiz-option').forEach(optionButton => {
-                optionButton.addEventListener('click', () => handleQuizAnswer(optionButton, optionButton.dataset.isCorrect === 'true'));
+        
+        const images = Array.from(modalContent.querySelectorAll('img'));
+        const iframes = Array.from(modalContent.querySelectorAll('iframe'));
+        const mediaPromises = [];
+
+        images.forEach(img => {
+            const promise = new Promise((resolve) => {
+                if (img.complete) {
+                    resolve();
+                } else {
+                    img.onload = resolve;
+                    img.onerror = resolve; // Fortsæt selvom et billede fejler
+                }
             });
+            mediaPromises.push(promise);
         });
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
-        const images = modalContent.querySelectorAll('img');
-        const imagePromises = [...images].map(img => new Promise((resolve) => { if (img.complete) resolve(); else { img.onload = resolve; img.onerror = resolve; } }));
-        Promise.all(imagePromises).then(() => {
-            void modal.offsetHeight;
-            modal.classList.add('is-visible');
+
+        iframes.forEach(iframe => {
+            const promise = new Promise((resolve) => {
+                iframe.onload = resolve;
+                iframe.onerror = resolve; // Fortsæt selvom en video fejler
+            });
+            mediaPromises.push(promise);
+        });
+
+        // 4. Vent på alle medier, vis derefter indhold
+        Promise.allSettled(mediaPromises).then(() => {
+            // Opsæt quiz-listeners efter indholdet er klar
+            modalContent.querySelectorAll('.quiz-block').forEach(quizBlock => {
+                quizBlock.querySelectorAll('.quiz-option').forEach(optionButton => {
+                    optionButton.addEventListener('click', () => handleQuizAnswer(optionButton, optionButton.dataset.isCorrect === 'true'));
+                });
+            });
+
+            // Genskab Lucide-ikoner
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Skjul loader og vis indhold
+            modalLoader.style.display = 'none';
+            modalContent.style.display = 'block';
         });
     };
 
+    // Hvis lågen allerede var åbnet, vis modal direkte
     if (doorElement.classList.contains('was-opened')) {
         showModal();
         return;
     }
 
+    // Logik for førstegangs-åbning (med animation)
     const openedDoors = JSON.parse(localStorage.getItem('openedDoors')) || [];
     if (!openedDoors.includes(day)) {
         openedDoors.push(day);
         localStorage.setItem('openedDoors', JSON.stringify(openedDoors));
     }
     
-    closeModal(); // Ensure other modals are closed before animation
+    closeModal(); // Sørg for at andre modaler er lukket før animation
 
     const doorFront = doorElement.querySelector('.door-front');
     if (doorFront) {
-        // The 'transitionend' event will fire when the fade-out is complete
-        doorFront.addEventListener('transitionend', () => {
-            setTimeout(showModal, 50); // Small delay before showing modal
-        }, { once: true });
+        // 'transitionend' eventet fyrer, når fade-out er færdig
+        doorFront.addEventListener('transitionend', showModal, { once: true });
     } else {
-        // Fallback for safety, e.g. if the doorFront is not found
+        // Fallback for en sikkerheds skyld
         setTimeout(showModal, 500);
     }
     
-    // Add class to trigger the fade-out animation
+    // Tilføj klasse for at starte fade-out animationen
     doorElement.classList.add('was-opened');
 }
 
@@ -360,6 +417,9 @@ document.addEventListener('keydown', (e) => {
         closeModal();
     }
 });
+
+// Luk modal med knappen
+modalCloseButton.addEventListener('click', closeModal);
 
 // Start applikationen når siden er klar
 window.onload = initializeApp;

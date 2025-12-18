@@ -63,6 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
             this.configMainTitle = document.getElementById('config-main-title');
             this.configSubtitle = document.getElementById('config-subtitle');
             this.configLogoUrl = document.getElementById('config-logo-url');
+            this.configLogoAlt = document.getElementById('config-logo-alt');
+            this.configDoorType = document.getElementById('config-door-type');
+            this.configDoorDesign = document.getElementById('config-door-design');
+            this.configShowSnowfall = document.getElementById('config-show-snowfall');
+            this.configShowSnowdrift = document.getElementById('config-show-snowdrift');
             this.shuffleDoors = document.getElementById('shuffle-doors');
             this.configTestMode = document.getElementById('config-test-mode');
             this.doorOrderContainer = document.getElementById('door-order-container');
@@ -81,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.modalContent = document.getElementById('modal-content');
             this.modalCloseButton = document.getElementById('modal-close-button');
             
+            this.tabNav = document.querySelector('.tab-nav');
             this.configFieldsContainer = document.querySelector('.editor-container > div');
             this.addBlockButtons = document.querySelector('.add-block-buttons');
             this.emojiPicker = document.querySelector('emoji-picker');
@@ -188,6 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 State.data.config.doorOrder = newOrder;
                 State.markChange();
             });
+
+            DOM.tabNav.addEventListener('click', e => this.handleTabClick(e));
         },
 
         populateFields() {
@@ -195,6 +203,11 @@ document.addEventListener('DOMContentLoaded', () => {
             DOM.configMainTitle.value = config.mainTitle || '';
             DOM.configSubtitle.value = config.subtitle || '';
             DOM.configLogoUrl.value = config.logoUrl || '';
+            DOM.configLogoAlt.value = config.logoAltText || '';
+            DOM.configDoorType.value = config.doorType || 'default';
+            DOM.configDoorDesign.value = config.doorDesign || 'default';
+            DOM.configShowSnowfall.checked = config.showSnowfall !== false; // Default to true
+            DOM.configShowSnowdrift.checked = config.showSnowdrift !== false; // Default to true
             DOM.configTestMode.checked = config.isTestMode || false;
         },
 
@@ -216,9 +229,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 mainTitle: DOM.configMainTitle.value,
                 subtitle: DOM.configSubtitle.value,
                 logoUrl: DOM.configLogoUrl.value,
+                logoAltText: DOM.configLogoAlt.value,
+                doorType: DOM.configDoorType.value,
+                doorDesign: DOM.configDoorDesign.value,
+                showSnowfall: DOM.configShowSnowfall.checked,
+                showSnowdrift: DOM.configShowSnowdrift.checked,
                 isTestMode: DOM.configTestMode.checked,
                 doorOrder: State.data.config.doorOrder
             };
+        },
+
+        handleTabClick(e) {
+            const button = e.target.closest('.tab-btn');
+            if (!button) return;
+
+            const tabId = button.dataset.tab;
+            if (!tabId) return;
+
+            // Deactivate current active tab and content
+            const activeBtn = DOM.tabNav.querySelector('.tab-btn.active');
+            const activeContent = document.querySelector('.tab-content.active');
+            if (activeBtn) activeBtn.classList.remove('active');
+            if (activeContent) activeContent.classList.remove('active');
+
+            // Activate new tab and content
+            button.classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
         },
 
         shuffleDoors() {
@@ -384,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     contentHtml = `<label>Billed-URL</label><input type="text" class="block-value" value="${block.value}"><label style="margin-top: .5rem;">Alternativ tekst</label><input type="text" class="block-alt" value="${block.alt || ''}">`;
                     break;
                 case 'video':
-                     contentHtml = `<label>YouTube Embed URL</label><input type="text" class="block-value" value="${block.value}">`; break;
+                     contentHtml = `<label>YouTube URL</label><input type="text" class="block-value" value="${block.value}">`; break;
                 case 'quiz':
                     const optionsHtml = block.value.options.map((option, i) => `<div class="quiz-option"><input type="radio" name="correct-answer-${index}" ${i === block.value.correctIndex ? 'checked' : ''}><input type="text" class="quiz-option-text" value="${option}"><button type="button" class="btn-danger btn-remove-option" aria-label="Fjern svarmulighed">&times;</button></div>`).join('');
                     contentHtml = `<label>Quiz-spørgsmål</label>${Toolbar.createHTML()}<div class="quiz-question wysiwyg-editor" contenteditable="true">${block.value.question}</div><label>Svarmuligheder (vælg den korrekte)</label><div class="quiz-options-container">${optionsHtml}</div><button class="btn-secondary btn-add-option">Tilføj svarmulighed</button><label>Forklaring efter svar</label>${Toolbar.createHTML()}<div class="quiz-explanation wysiwyg-editor" contenteditable="true">${block.value.explanation}</div>`; break;
@@ -482,7 +518,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     case 'answer': case 'refleksion': newBlock = { type, value: blockEl.querySelector('.block-value').innerHTML }; break;
                     case 'html': newBlock = { type, value: blockEl.querySelector('.block-value').value }; break;
                     case 'image': newBlock = { type, value: blockEl.querySelector('.block-value').value, alt: blockEl.querySelector('.block-alt').value }; break;
-                    case 'video': newBlock = { type, value: blockEl.querySelector('.block-value').value }; break;
+                    case 'video':
+                        const rawUrl = blockEl.querySelector('.block-value').value;
+                        // Extracts video ID from various YouTube URL formats
+                        const videoIdMatch = rawUrl.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+                        const finalUrl = videoIdMatch ? `https://www.youtube.com/embed/${videoIdMatch[1]}` : rawUrl;
+                        newBlock = { type, value: finalUrl };
+                        break;
                     case 'quiz':
                         const options = Array.from(blockEl.querySelectorAll('.quiz-option-text')).map(input => input.value);
                         const correctRadio = blockEl.querySelector('input[name^="correct-answer-"]:checked');
